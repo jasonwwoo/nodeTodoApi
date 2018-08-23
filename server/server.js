@@ -73,7 +73,7 @@ app.delete("/todos/:id", (req, res) => {
           .status(404)
           .send({ error: "Could not find Todo ID", status: 404 });
       }
-      res.status(200).send(todo);
+      res.status(200).send({ todo });
     })
     .catch(e => {
       res.status(400).send(e);
