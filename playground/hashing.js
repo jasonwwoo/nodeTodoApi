@@ -18,6 +18,7 @@ bcrypt.compare(password, hashpassword, (err, res) => {
   console.log(res);
 });
 
+// ****************JWT******************
 // var data = {
 //   id: 10
 // };
@@ -25,7 +26,7 @@ bcrypt.compare(password, hashpassword, (err, res) => {
 // console.log(data);
 
 // var token = jwt.sign(data, "123abc");
-// console.log(token);
+// console.log(`token: ${token}`);
 
 // var decoded = jwt.verify(token, "123abc");
 // console.log("decoded", decoded);
