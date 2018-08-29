@@ -11,7 +11,7 @@ const users = [
   {
     _id: userOneId,
     email: "jason@example.com",
-    password: "pass1",
+    password: "password1",
     tokens: [
       {
         access: "auth",
@@ -22,7 +22,7 @@ const users = [
   {
     _id: userTwoId,
     email: "jason2@example.com",
-    password: "pass2"
+    password: "password2"
   }
 ];
 

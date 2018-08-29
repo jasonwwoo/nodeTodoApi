@@ -4,6 +4,7 @@ const { ObjectID } = require("mongodb");
 
 const { app } = require("./../server");
 const { Todo } = require("./../models/todo");
+const { User } = require("./../models/user");
 const { todos, populateTodos, users, populateUsers } = require("./seeds/seed");
 
 beforeEach(populateTodos);
@@ -174,6 +175,86 @@ describe("PATCH /todos/:id", () => {
         expect(res.body.todo.completed).toBe(false);
         expect(res.body.todo.completedAt).toBe(null);
       })
+      .end(done);
+  });
+});
+
+describe("GET /users/me", () => {
+  // describe Mocha
+  it("should return user if authenticated", done => {
+    // it Mocha
+    request(app) // supertest
+      .get("/users/me") //supertest
+      .set("x-auth", users[0].tokens[0].token) //supertest
+      .expect(200) //superTest
+      .expect(res => {
+        //expect
+        expect(res.body._id).toBe(users[0]._id.toHexString());
+        expect(res.body.email).toBe(users[0].email);
+      })
+      .end(done);
+  });
+
+  it("should return 401 if not authenticate", done => {
+    request(app)
+      .get("/users/me")
+      .expect(401)
+      .expect(res => {
+        expect(res.body).toEqual({});
+      })
+      .end(done);
+  });
+});
+
+describe("POST /users", () => {
+  it("should create a user", done => {
+    var email = "jen@example.com";
+    var password = "password1";
+
+    request(app)
+      .post("/users")
+      .send({ email, password })
+      .expect(200)
+      .expect(res => {
+        expect(res.headers["x-auth"]).toBeTruthy();
+        expect(res.body._id).toBeTruthy();
+        expect(res.body.email).toBe(email);
+      })
+      .end(err => {
+        if (err) {
+          return done(err);
+        }
+        User.findOne({ email })
+          .then(user => {
+            expect(user).toBeTruthy();
+            expect(user.email).toBe(email);
+            expect(user.password).not.toBe(password);
+            done();
+          })
+          .catch(e => {
+            done(e);
+          });
+      });
+  });
+
+  it("should return validation errors if request invalid", done => {
+    var email = "invalid Email";
+    var password = "pass";
+    request(app)
+      .post("/users")
+      .send({ email, password })
+      .expect(400)
+      .end(done);
+  });
+
+  it("should not create user if email in use", done => {
+    var email = "jason@example.com";
+    var password = "diffpassword";
+
+    request(app)
+      .post("/users")
+      .send({ email, password })
+      .expect(400)
       .end(done);
   });
 });
