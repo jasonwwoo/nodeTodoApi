@@ -305,7 +305,7 @@ describe("POST /users/login", () => {
       })
       .end((err, res) => {
         if (err) {
-          return done(`err: ${err}`);
+          return done(err);
         }
         User.findById(users[1]._id)
           .then(user => {
@@ -314,7 +314,7 @@ describe("POST /users/login", () => {
             done();
           })
           .catch(e => {
-            done(`e: ${e}`);
+            done(e);
           });
       });
   });

@@ -83,22 +83,32 @@ UserSchema.statics.findByCredentials = function(email, password) {
       return Promise.reject();
     }
     return new Promise((resolve, reject) => {
-      bcrypt
-        .compare(password, user.password)
-        .then(() => {
-          resolve(user);
-        })
-        .catch(e => {
-          reject(e);
-        });
-      // bcrypt.compare(password, user.password, (err, res) => {
-      //   if (res) {
+      // bcrypt
+      //   .compare(password, user.password)
+      //   .then(() => {
       //     resolve(user);
-      //   } else {
-      //     reject("typed password didn't match bcrypted password");
-      //   }
-      // });
+      //   })
+      //   .catch(e => {
+      //     reject(e);
+      //   });
+      bcrypt.compare(password, user.password, (err, res) => {
+        if (res) {
+          resolve(user);
+        } else {
+          reject("typed password didn't match bcrypted password");
+        }
+      });
     });
+  });
+};
+
+UserSchema.methods.removeToken = function(token) {
+  const user = this;
+
+  return user.update({
+    $pull: {
+      tokens: { token }
+    }
   });
 };
 
